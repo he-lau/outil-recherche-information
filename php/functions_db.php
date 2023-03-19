@@ -8,7 +8,7 @@ require_once("debug_console.php");
 function connect_db() {
   global $db;
 
-$server = "localhost;port=3306;dbname=m1_gestionnaire_fichiers";
+$server = "localhost;port=3306;dbname=m1_outil_recherche";
 $username = "root";
 $password = "";
 
@@ -23,87 +23,132 @@ try {
 }
 }
 
-/*
-  Obtenir le nombre total de documents dans la bd
-*/
-
-function select_count_all() {
-  global $db;
-
-  $select_count = $db->prepare("SELECT COUNT(*) FROM document");
-  $select_count->execute();
-  return $select_count->fetch();
-}
-
-/*
-  Obtenir le nombre de document pour la pagination courante
-*/
-
-function select_current_page($indice_debut,$limit) {
-  global $db;
-  $select_current_page = $db->prepare("SELECT * FROM document LIMIT $indice_debut,$limit");
-  $select_current_page->execute();
-  return $select_current_page->fetchAll();
-
-}
-
-// Obtenir l'id d'un dossier avec son chemin
-function get_dossier_id($chemin) {
-  global $db;
-
-  $select_dossier_id = $db->prepare("SELECT id FROM dossier WHERE chemin=?");
-  $select_dossier_id->execute([$chemin]);
-  return $select_dossier_id->fetch();
-}
-
-// Ajout d'un dossier à la db
-function insert_dossier($chemin,$nom,$niveau,$parent_id) {
-  global $db;
-
-  $insert_into_dossier= $db->prepare("INSERT INTO DOSSIER (chemin, nom, niveau, parent_id) VALUES (:chemin, :nom, :niveau, :parent_id)");
-  try {
-    $insert_into_dossier->execute(array(
-      "chemin" => $chemin,
-      "nom" => $nom,
-      "niveau" => $niveau,
-      "parent_id" => $parent_id
-    ));
-    debug_to_console("Injection à la table DOSSIER réussi.\n");
-  } catch (PDOException $e) {
-    debug_to_console("Insert failed :"  . $e->getMessage());
-  }
-
-}
-
 
 /*
   Ajout d'un document à la base
 */
-function insert_document($nom,$chemin,$dossier_id,$extension,$taille) {
+function insert_document($nom, $chemin, $extension, $taille) {
   global $db;
 
-  $insert_into_document= $db->prepare("INSERT INTO document (nom,chemin,dossier_id,extension,taille) VALUES (:nom,:chemin,:dossier_id,:extension,:taille)");
-  try {
-    $insert_into_document->execute(array(
-      "nom" => $nom,
-      "chemin" => $chemin,
-      "dossier_id" => $dossier_id,
-      "extension" => $extension,
-      "taille"=>$taille
-    ));
-    debug_to_console("Injection réussi.\n");
-  } catch (PDOException $e) {
-    debug_to_console("Insert failed :"  . $e->getMessage());
+  // Check if document already exists based on chemin
+  $stmt = $db->prepare("SELECT id FROM DOCUMENT WHERE chemin = :chemin");
+  $stmt->execute(array("chemin" => $chemin));
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if (!$row) {
+    // Document does not exist, insert a new row
+    $insert_stmt = $db->prepare("INSERT INTO DOCUMENT (nom, chemin, extension, taille) VALUES (:nom, :chemin, :extension, :taille)");
+    try {
+      $insert_stmt->execute(array(
+        "nom" => $nom,
+        "chemin" => $chemin,
+        "extension" => $extension,
+        "taille" => $taille
+      ));
+      debug_to_console("Injection à la table DOCUMENT réussi.\n");
+    } catch (PDOException $e) {
+      debug_to_console("Insert failed: " . $e->getMessage());
+    }
+  } else {
+    debug_to_console("[INFO] DOCUMENT existant, insertion annulée.");
   }
 }
 
-function select_document_path_with_id($id) {
+
+// Ajout d'un mot à la db
+function insert_mot($contenu) {
   global $db;
 
-  $select_query = $db->prepare("SELECT chemin FROM document WHERE id = ?");
-  $select_query->execute([$id]);
-  return $select_query->fetchColumn();
+  // Check if mot already exists based on contenu
+  $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu = :contenu");
+  $stmt->execute(array("contenu" => $contenu));
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if (!$row) {
+    // Mot does not exist, insert a new row
+    $insert_stmt = $db->prepare("INSERT INTO MOT (contenu) VALUES (:contenu)");
+    try {
+      $insert_stmt->execute(array(
+        "contenu" => $contenu
+      ));
+      debug_to_console("Injection à la table MOT réussi.\n");
+    } catch (PDOException $e) {
+      debug_to_console("Insert failed: " . $e->getMessage());
+    }
+  } else {
+    debug_to_console("[INFO] MOT existant, insertion annulée.");
+  }
 }
+
+
+
+function insert_indexation($document_id, $mot_id, $frequence_mot) {
+  global $db;
+
+  // Check if the indexation already exists for the given document and word
+  $stmt = $db->prepare("SELECT id FROM INDEXATION WHERE document = :document_id AND mot = :mot_id");
+  $stmt->execute(array("document_id" => $document_id, "mot_id" => $mot_id));
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if (!$row) {
+    // Indexation does not exist, insert a new row
+    $insert_stmt = $db->prepare("INSERT INTO INDEXATION (document, mot, frequence_mot) VALUES (:document_id, :mot_id, :frequence_mot)");
+    try {
+      $insert_stmt->execute(array(
+        "document_id" => $document_id,
+        "mot_id" => $mot_id,
+        "frequence_mot" => $frequence_mot
+      ));
+      debug_to_console("Injection à la table INDEXATION réussie.\n");
+    } catch (PDOException $e) {
+      debug_to_console("Insert failed: " . $e->getMessage());
+    }
+  } else {
+    debug_to_console("[INFO] INDEXATION existant, insertion annulée.");
+  }
+}
+
+function get_document_id($chemin) {
+  global $db;
+
+  // préparer la requête de recherche
+  $stmt = $db->prepare("SELECT id FROM DOCUMENT WHERE chemin = :chemin");
+
+  // exécuter la requête avec le paramètre chemin
+  $stmt->execute(array("chemin" => $chemin));
+
+  // récupérer la première ligne du résultat
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  // si le document existe, retourner son ID
+  if ($row) {
+    return $row["id"];
+  }
+
+  // sinon, retourner null
+  return null;
+}
+
+function get_id_mot($contenu) {
+  global $db;
+  
+  // Recherche le mot dans la table MOT
+  $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu = :contenu");
+  $stmt->execute(array("contenu" => $contenu));
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if ($row) {
+    // Mot trouvé, renvoie son ID
+    return $row['id'];
+  } else {
+    // Mot non trouvé
+    return null;
+  }
+}
+
+
+
+
 
 
 ?>

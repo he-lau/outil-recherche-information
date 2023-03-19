@@ -1,91 +1,15 @@
 <?php
-
-function console_log($msg, $content='') {
-    echo "<script>console.log('[INFO] $msg : $content')</script>";
-}
-
-function read_file($path, $separator=" ") {
-    console_log("Lecture du fichier",$path);
-    $contenuFichier = file_get_contents($path);
-    console_log("Longueur du fichier",strlen($contenuFichier));
-    //echo strlen($contenuFichier);
-    return explode($separator,$contenuFichier);
-}
-
-function clean_array($array,$path) {
-    console_log("Nettoyage des mots",$path);
-    // minuscule
-    $array = array_map('strtolower', $array);
-    // espace
-    $array = array_map('trim', $array);
-
-    // garder que les mots
-    //$array = preg_grep('/^[a-zA-Z]{2,}$/', $array);
-
-    // garder les mots et les chiffres
-    $array = preg_grep('/^[a-z0-9]{2,}$/', $array);
-
-
-
-    return $array;
-}
-
-
-function remove_stopwords($file, $stopwords, $path) {
-    console_log("Suppression des stopwords",$path);
-
-    $count = 0;
-
-    // parcours de l'ensemble des mots
-    foreach ($file as $key => $word) {
-        // si le mot est présent dans les stopwords, le supprimer de la liste
-        if (in_array($word, $stopwords)) {
-            unset($file[$key]);
-            $count++;
-        }
-    }
-    console_log("[FIN] Suppression des stopwords",$path);
-    console_log("$count stopwords supprimés",$path);
-    return $file;
-}
-
-function tokenisation($content,$path) {
-    console_log("tokenisation des mots",$path);
-
-    $occurrences = array();
-
-    foreach($content as $word) {
-        // si l'occurence est deja dans le tableau on l'incremente
-        if(isset($occurrences[$word])) {
-            $occurrences[$word]++;
-        } else {
-            // init à 1
-            $occurrences[$word] = 1;
-        }
-    }
-
-    console_log("[FIN] tokenisation des mots",$path);
-
-    return $occurrences;
-}
-
-function afficher_liste_html($occurrences,$path) {
-    // Tri du tableau par ordre décroissant de la valeur (nombre d'apparitions)
-    arsort($occurrences);
-
-    // Affichage de la liste à puces HTML
-    echo "<h2>$path</h2>";
-    echo "<ul>";
-    foreach ($occurrences as $word => $count) {
-        echo "<li>$word : $count</li>";
-    }
-    echo "</ul>";
-}
-
-
-
+    require_once "php/tokenisation.php";
 ?>
 
+<?php
+    require_once "php/functions_db.php";
+
+    connect_db();
+
+    //TODO : à partir de $contenuFichier & $cheminFichier maj bdd
+
+?>
 
 
 <?php
@@ -94,7 +18,7 @@ function afficher_liste_html($occurrences,$path) {
     $cheminFichier = './docs/web.txt';
     $contenuFichier = read_file($cheminFichier);
 
-    $stop_path = './stopwordsv2.txt';
+    $stop_path = './stopwords-fr.txt';
     $stop_content = read_file($stop_path,"\n");
 
     // nettoyage
@@ -107,15 +31,43 @@ function afficher_liste_html($occurrences,$path) {
     //var_dump(implode("<br>", $contenuFichier));
 
     $tokenisation = tokenisation($contenuFichier,$cheminFichier);
+
+    // nom fichier + liste mots 
     afficher_liste_html($tokenisation,$cheminFichier);
 
 
 
+    // insertion DOCUMENT
+
+    // Get file name
+    $nomFichier = pathinfo($cheminFichier, PATHINFO_FILENAME);
+
+    // Get file path
+    $chemin = realpath($cheminFichier);
+
+    // Get file extension
+    $extension = pathinfo($cheminFichier, PATHINFO_EXTENSION);
+
+    // Get file size
+    $taille = filesize($cheminFichier);
+
+    insert_document($nomFichier,$chemin,$extension,$taille);
+
+
+    // insertion MOT & INDEXATION
+
+    $id_document = get_document_id($chemin);
+
+    foreach ($tokenisation as $contenu => $frequence_mot) {
+        insert_mot($contenu);
+        $id_mot = get_id_mot($contenu);
+        insert_indexation($id_document,$id_mot,$frequence_mot);
+
+        //debug_to_console(get_id_mot($contenu));
+    }    
 
 ?>
 
-<?php
-    require_once "php/functions_db.php";
 
-    connect_db();
-?>
+
+
