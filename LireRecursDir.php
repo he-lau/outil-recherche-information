@@ -1,4 +1,3 @@
-
 <P>
 <B>DEBUTTTTTT DU PROCESSUS :</B>
 <BR>
@@ -6,11 +5,13 @@
 </P>
 <?php
 
-//Le dossier de départ
+require_once "indexation.php";
+
+//Le dossier de dï¿½part
 $path= "docs";
 
 //Augmentation du temps
-//d'exécution de ce script
+//d'exï¿½cution de ce script
 set_time_limit (500);
 
 explorerDir($path);
@@ -21,19 +22,19 @@ function explorerDir($path)
 	
 	while($entree = readdir($folder))
 	{		
-		//On ignore les entrées
+		//On ignore les entrï¿½es
 		if($entree != "." && $entree != "..")
 		{
-			// On vérifie si il s'agit d'un répertoire
+			// On vï¿½rifie si il s'agit d'un rï¿½pertoire
 			if(is_dir($path."/".$entree))
 			{
 				$sav_path = $path;
 				
-				// Construction du path jusqu'au nouveau répertoire
+				// Construction du path jusqu'au nouveau rï¿½pertoire
 				$path .= "/".$entree;
 								
-				// On parcours le nouveau répertoire
-				// En appellant la fonction avec le nouveau répertoire
+				// On parcours le nouveau rï¿½pertoire
+				// En appellant la fonction avec le nouveau rï¿½pertoire
 				explorerDir($path);
 				$path = $sav_path;
 			}
@@ -41,9 +42,14 @@ function explorerDir($path)
 			{	
 				$path_source = $path."/".$entree;				
 				
-				//Si c'est un .txt en testant l'extension
-				//Alors j'appelle le module de l'indexation
-				//...
+				//TODO : Si c'est un .txt en testant l'extension							
+				// TODO : appeller cette fonction si .txt				
+
+				$extension = pathinfo($path_source, PATHINFO_EXTENSION);
+				if ($extension == "txt") {								
+					indexation($path_source);
+					echo $path_source." âœ“<br>";
+				}
 			}
 		}
 	}

@@ -1,4 +1,11 @@
+
+
 <?php
+
+header('Content-Type: text/html; charset=utf-8');
+mb_internal_encoding('UTF-8');
+
+
 
 function console_log($msg, $content='') {
     echo "<script>console.log('[INFO] $msg : $content')</script>";
@@ -7,6 +14,7 @@ function console_log($msg, $content='') {
 function read_file($path, $separator=" ") {
     console_log("Lecture du fichier",$path);
     $contenuFichier = file_get_contents($path);
+
     console_log("Longueur du fichier",strlen($contenuFichier));
     //echo strlen($contenuFichier);
     return explode($separator,$contenuFichier);
@@ -15,7 +23,8 @@ function read_file($path, $separator=" ") {
 function clean_array($array,$path) {
     console_log("Nettoyage des mots",$path);
     // minuscule
-    $array = array_map('strtolower', $array);
+    $array = array_map('mb_strtolower', $array);
+
     // espace
     $array = array_map('trim', $array);
     // uniformiser les apostrophes pour le fr
@@ -27,10 +36,14 @@ function clean_array($array,$path) {
     // Supprimer les caractères avant une apostrophe (',’)
     $array = preg_replace('/\w*\'(\w+)/', '$1', $array);        
 
-    $array = preg_replace('/[\p{P}]/u', '', $array);
 
+
+    $array = preg_replace('/[\p{P}]/u', '', $array);
+    
     // garder les mots et les chiffres
-    $array = preg_grep('/^[a-z0-9]{3,}$/', $array);    
+    //$array = preg_grep('/^[a-z0-9]{3,}$/', $array);    
+    $array = preg_grep('/^[\p{Ll}\p{Nd}]{3,}$/u', $array);
+
 
     return $array;
 }

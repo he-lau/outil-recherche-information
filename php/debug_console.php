@@ -1,7 +1,7 @@
 <?php
 
-function debug_to_console($data) {
-    $output = $data;
+function debug_to_console($output) {
+
     if (is_array($output))
         $output = implode(',', $output);
 

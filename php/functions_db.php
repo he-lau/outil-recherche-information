@@ -45,12 +45,12 @@ function insert_document($nom, $chemin, $extension, $taille) {
         "extension" => $extension,
         "taille" => $taille
       ));
-      debug_to_console("Injection à la table DOCUMENT réussi.\n");
+      debug_to_console("Injection à la table DOCUMENT réussi.");
     } catch (PDOException $e) {
       debug_to_console("Insert failed: " . $e->getMessage());
     }
   } else {
-    debug_to_console("[INFO] DOCUMENT existant, insertion annulée.");
+    //debug_to_console("[INFO] DOCUMENT existant, insertion annulée.");
   }
 }
 
@@ -71,12 +71,12 @@ function insert_mot($contenu) {
       $insert_stmt->execute(array(
         "contenu" => $contenu
       ));
-      debug_to_console("Injection à la table MOT réussi.\n");
+      debug_to_console("Injection à la table MOT réussi.");
     } catch (PDOException $e) {
       debug_to_console("Insert failed: " . $e->getMessage());
     }
   } else {
-    debug_to_console("[INFO] MOT existant, insertion annulée.");
+    //debug_to_console("[INFO] MOT existant, insertion annulée.");
   }
 }
 
@@ -99,12 +99,12 @@ function insert_indexation($document_id, $mot_id, $frequence_mot) {
         "mot_id" => $mot_id,
         "frequence_mot" => $frequence_mot
       ));
-      debug_to_console("Injection à la table INDEXATION réussie.\n");
+      debug_to_console("Injection à la table INDEXATION réussie.");
     } catch (PDOException $e) {
       debug_to_console("Insert failed: " . $e->getMessage());
     }
   } else {
-    debug_to_console("[INFO] INDEXATION existant, insertion annulée.");
+    //debug_to_console("[INFO] INDEXATION existant, insertion annulée.");
   }
 }
 
@@ -147,7 +147,57 @@ function get_id_mot($contenu) {
 }
 
 
+// PREMIERE VERSION avec select all
 
+/*
+function get_mot_infos($mot_id) {
+  global $db;
+
+  $stmt = $db->prepare("SELECT * FROM INDEXATION WHERE mot = :mot_id");
+
+  $stmt->execute(array("mot_id" => $mot_id));
+
+  // Récupérer tous les résultats de la requête
+  $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  return $results;
+}
+*/
+
+
+// retourne les infos pour un mot
+function get_mot_infos($mot_id) {
+  global $db;
+
+  // on recupere le chemin du document , le contenu du mot et la frequence ($mot_id)
+  // JOINTURE pour recuperer les données des documents et des mots avec leurs id
+  $stmt = $db->prepare("SELECT DOCUMENT.chemin, MOT.contenu, INDEXATION.frequence_mot  FROM INDEXATION 
+                        JOIN MOT ON INDEXATION.mot = MOT.id 
+                        JOIN DOCUMENT ON INDEXATION.document = DOCUMENT.id 
+                        WHERE INDEXATION.mot = :mot_id");
+
+  $stmt->execute(array("mot_id" => $mot_id));
+
+  // retourne sous forme de tableau 2D
+  /*
+
+  array(
+      array(
+          "contenu" => "mot1",
+          "chemin" => "./doc1.txt",
+          "frequence_mot" => "9"
+      ),
+      array(
+          "contenu" => "mot1",
+          "chemin" => "./doc2.txt",
+          "frequence_mot" => "2"
+      )
+  );
+  */
+  $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  return $results;
+}
 
 
 
