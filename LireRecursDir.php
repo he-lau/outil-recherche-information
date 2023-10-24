@@ -49,7 +49,15 @@ function explorerDir($path)
 				if ($extension == "txt") {								
 					indexation($path_source);
 					echo $path_source." ✓<br>";
+				} elseif ($extension === "html" || $extension === "htm") {
+					indexation($path_source);
+					echo $path_source." ✓<br>";
+				} elseif ($extension === 'pdf') {
+					echo $path_source." ✓<br>";
+
 				}
+
+
 			}
 		}
 	}

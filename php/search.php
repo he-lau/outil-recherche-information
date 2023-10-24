@@ -2,6 +2,7 @@
 require_once "functions_db.php";
 
 connect_db();
+
 ?>
 
 <?php
@@ -41,6 +42,8 @@ function sum_word_frequencies($infos_word) {
               $result[$chemin] = $frequence;
           }
 
+          //$result["documents_ids"][$info_array['id']] = ""; 
+
       }
   }
   // tri ordre decroissant
@@ -64,11 +67,11 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
 
   // requête à la bdd pour avoir l'id des mots (NULL si pas dans la base)
   $words_id = array_map("get_id_mot",$words);
-/*
+
   foreach ($words as $word) {
     array_push($words_id,get_id_mot($word));
   }
-*/  
+  
   //var_dump($words_id);
   //echo "<br>";  
 
@@ -141,6 +144,7 @@ $infos_word = array(
 */
 
 
+
 // on recupere la somme des frequences de tous les mots pour chaque doc
 $res = sum_word_frequencies($infos_word);
 // taille de la liste
@@ -148,14 +152,58 @@ $num_results = count($res);
 // html
 $results_html = '';
 
+$_SESSION['res'] = $res;
+
 
 // pour chaque doc, on affiche son nom.extension à l'aide de basename() (somme_frequence)
 foreach ($res as $doc => $freq_total) {
-  //recuperer une description du doc
-  $description = substr(file_get_contents($doc),0,200);
+
+  /**TODO : switch... case pour l'extension du fichier */
+
+  //
+  $info_fichier = pathinfo($doc);
+
+  //
+  $format = $info_fichier['extension'];
+
+  var_dump($info_fichier);
+
+
+  switch ($format) {
+    // .txt
+    case 'txt':
+      //recuperer une description du doc
+      $description = substr(file_get_contents(dirname(__FILE__, 2)."/".$doc),0,200);
+      break;      
+      
+      
+    case 'html':
+    case 'htm':
+      $htmlContent = file_get_contents(dirname(__FILE__, 2) . "/" . $doc);
+    
+      // Utilisez strip_tags pour supprimer toutes les balises HTML du contenu
+      $plainText = strip_tags($htmlContent);
+    
+      // Supprimez les espaces et les sauts de ligne inutiles
+      $plainText = preg_replace('/\s+/', ' ', $plainText);
+    
+      // Tronquez le texte à 200 caractères
+      $description = substr(htmlspecialchars($plainText), 0, 200);
+      break;    
+  } 
+
   // concatenation du resultat courant  
-  $results_html .= "<li><a href='./php/document_content.php?chemin=$doc'><h3>".basename($doc)."($freq_total)</h3><p class='doc-description'>$description...</p></a></li>";
+  $results_html .= "<li><a data-document-id='"."42"."' href='./php/document_content.php?chemin=$doc'><h3>".basename($doc)."($freq_total)</h3><p class='doc-description'>$description...</p></a></li>";
+
+
 }
+
+echo "<pre>";
+
+var_dump($infos_word);
+var_dump($words_id);
+
+echo "</pre>";
 
 // informe l'utilisateur de la requete + nombre de resultat
 echo "<h2 class='search-result-count'>Nombre de réponse(s) pour \"$query\" : $num_results</h2>";
@@ -163,5 +211,8 @@ echo "<h2 class='search-result-count'>Nombre de réponse(s) pour \"$query\" : $n
 echo "<ul class='search-result'>$results_html</ul>";
 
 } // isset
+
+
+
 
 ?>

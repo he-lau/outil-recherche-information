@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
   <meta charset="utf-8">
   <title>outil-recherche-mot</title>
   <link href="css/style.css" rel="stylesheet" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="js/jquery-3.6.0.min.js"></script>
 </head>
 
   <body>

@@ -11,6 +11,16 @@
 
 
 <?php
+
+    /**
+     *  
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+
     // lecture des fichiers
     function indexation($cheminFichier,$stop_path='./stopwords-fr.txt') {
         
@@ -19,16 +29,20 @@
         $stop_content = read_file($stop_path,"\n");
     
         // nettoyage
-        $contenuFichier = clean_array($contenuFichier,$cheminFichier);
-        $stop_content = clean_array($stop_content,$stop_path);
+        console_log("Nettoyage des mots", $cheminFichier);
+        $contenuFichier = clean_array($contenuFichier);
+        console_log("Nettoyage des mots", $stop_path);
+        $stop_content = clean_array($stop_content);
     
         // suppression des stopwords
-        $contenuFichier = remove_stopwords($contenuFichier,$stop_content,$cheminFichier);
+        console_log("Suppression des stopwords",$cheminFichier);
+        $contenuFichier = remove_stopwords($contenuFichier,$stop_content);
+        console_log("[FIN] Suppression des stopwords",$cheminFichier);
     
         //var_dump(implode("<br>", $contenuFichier));
-    
-        $tokenisation = tokenisation($contenuFichier,$cheminFichier);
-    
+        console_log("tokenisation des mots",$cheminFichier);
+        $tokenisation = tokenisation($contenuFichier);
+        console_log("[FIN] tokenisation des mots",$cheminFichier);
         // nom fichier + liste mots 
         //afficher_liste_html($tokenisation,$cheminFichier);
     
@@ -40,14 +54,16 @@
         $nomFichier = pathinfo($cheminFichier, PATHINFO_FILENAME);
     
         // Get file path
-        $chemin = realpath($cheminFichier);
+        //$chemin = realpath($cheminFichier);
+        $chemin = $cheminFichier;
     
         // Get file extension
         $extension = pathinfo($cheminFichier, PATHINFO_EXTENSION);
     
         // Get file size
         $taille = filesize($cheminFichier);
-    
+        
+        // requête serveur
         insert_document($nomFichier,$chemin,$extension,$taille);
     
     

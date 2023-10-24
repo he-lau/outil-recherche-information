@@ -1,3 +1,5 @@
+
+
 <?php
 
 require_once("debug_console.php");
@@ -16,7 +18,7 @@ try {
   $db = new PDO("mysql:host=$server", $username, $password);
   // set the PDO error mode to exception
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  debug_to_console("Connection a la db réussi.");
+  //debug_to_console("Connection a la db réussi.");
 
 } catch(PDOException $e) {
   debug_to_console("Connection failed:"  . $e->getMessage());
@@ -133,8 +135,8 @@ function get_id_mot($contenu) {
   global $db;
   
   // Recherche le mot dans la table MOT
-  $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu = :contenu");
-  $stmt->execute(array("contenu" => $contenu));
+  $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu LIKE :contenu");
+  $stmt->execute(array("contenu" => "%".$contenu."%"));
   $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if ($row) {
@@ -171,7 +173,7 @@ function get_mot_infos($mot_id) {
 
   // on recupere le chemin du document , le contenu du mot et la frequence ($mot_id)
   // JOINTURE pour recuperer les données des documents et des mots avec leurs id
-  $stmt = $db->prepare("SELECT DOCUMENT.chemin, MOT.contenu, INDEXATION.frequence_mot  FROM INDEXATION 
+  $stmt = $db->prepare("SELECT DOCUMENT.id, DOCUMENT.chemin, MOT.contenu, INDEXATION.frequence_mot  FROM INDEXATION 
                         JOIN MOT ON INDEXATION.mot = MOT.id 
                         JOIN DOCUMENT ON INDEXATION.document = DOCUMENT.id 
                         WHERE INDEXATION.mot = :mot_id");
@@ -198,6 +200,7 @@ function get_mot_infos($mot_id) {
 
   return $results;
 }
+
 
 
 

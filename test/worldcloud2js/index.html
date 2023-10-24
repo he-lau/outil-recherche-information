@@ -1,0 +1,307 @@
+
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+
+  body {
+    font-family: sans-serif;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .word-cloud-container {
+    display: flex;
+  }
+  
+  .word-cloud-card {
+    width: 100%;
+  }
+  
+  .word-cloud-title {
+    font-weight: bold;
+    font-size: 1.2em;
+    text-align: center;
+    text-decoration: underline;
+  }
+  
+  #word-cloud-canvas-hover-box {
+    pointer-events: none;
+    position: absolute;
+    box-shadow: 0 0 200px 200px rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+    border-style: solid;
+    cursor: pointer;
+  }
+  
+  #word-cloud-html > span {
+      transition: text-shadow 1s ease, opacity 1s ease;
+      -webkit-transition: text-shadow 1s ease, opacity 1s ease;
+      -ms-transition: text-shadow 1s ease, opacity 1s ease;
+    }
+  
+   #word-cloud-html > span:hover {
+      text-shadow: 0 0 10px, 0 0 10px #fff, 0 0 10px #fff, 0 0 10px #fff;
+      opacity: 0.5;
+    }
+  
+  .button-3 {
+    appearance: none;
+    background-color: #2ea44f;
+    border: 1px solid rgba(27, 31, 35, .15);
+    border-radius: 6px;
+    box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 6px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  
+  .button-3:focus:not(:focus-visible):not(.focus-visible) {
+    box-shadow: none;
+    outline: none;
+  }
+  
+  .button-3:hover {
+    background-color: #2c974b;
+  }
+  
+  .button-3:focus {
+    box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+    outline: none;
+  }
+  
+  .button-3:disabled {
+    background-color: #94d3a2;
+    border-color: rgba(27, 31, 35, .1);
+    color: rgba(255, 255, 255, .8);
+    cursor: default;
+  }
+  
+  .button-3:active {
+    background-color: #298e46;
+    box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+  }
+
+    </style>
+  </head>
+  <body>
+    <div class="text-center">
+        <button id="redrawButton" class="button-3" role="button">Redraw</button>
+      </div>
+      <br />
+      <div class="word-cloud-container">
+        <div class="word-cloud-card">
+          <div class="word-cloud-title">Canvas-based Word Cloud</div>
+          <canvas id="word-cloud-canvas" width="800px" height="400px"></canvas>
+          <div id="word-cloud-canvas-hover-box" hidden></div>
+        </div>
+        <div class="word-cloud-card">
+          <div class="word-cloud-title">HTML-based Word Cloud</div>
+          <div id="word-cloud-html" width="800px" height="400px"></div>
+          <div id="word-cloud-canvas-hover-box" hidden></div>
+        </div>
+      </div>
+
+
+
+      <div id="demo" style="width: 800px; height: 400px; position: relative;"></div>
+      
+  <script src="wordcloud2.js"></script>
+
+  <script>
+
+const drawWordCloud = () => {
+  
+  const words = [
+    ["superman", 27],
+    ["batman", 8],
+    ["superhero", 7],
+    ["supergirl", 3],
+    ["lois lane", 7],
+    ["kryptonite", 9],
+    ["wonder woman", 2],
+    ["lex luthor", 5],
+    ["dc comics", 4],
+    ["krypton", 3],
+    ["smallville", 3],
+    ["cape", 2],
+    ["daily planet", 2],
+    ["superboy", 1],
+    ["jor-el", 1],
+    ["metropolis", 3],
+    ["clark kent", 5],
+    ["christopher reeve", 1],
+    ["united states", 1],
+    ["action comics", 1],
+    ["demigod", 1],
+    ["clark", 3],
+    ["superheroes", 3],
+    ["aquaman", 1],
+    ["movie", 1],
+    ["villain", 1],
+    ["cartoon", 1],
+    ["high school", 1],
+    ["supervillain", 1],
+    ["kent", 2],
+    ["spider man", 1],
+    ["comic books", 1],
+    ["marvel comic", 1],
+    ["silver surfer", 1],
+    ["american comic book", 1],
+    ["flash", 1],
+    ["lois", 3],
+    ["super hero", 1],
+    ["justice league", 2],
+    ["captain", 1],
+    ["monster", 1],
+    ["action", 1],
+    ["justice league of america", 2],
+    ["justice", 1],
+    ["invisible man", 1],
+    ["spider-man", 1],
+    ["zod", 2],
+    ["doomsday", 2],
+    ["spiderman", 1],
+    ["homelander", 1],
+    ["lex", 2]
+  ];
+
+  if (WordCloud.isSupported) {
+    const wordCloudCanvas = document.getElementById('word-cloud-canvas');
+    const wordCloudHtml = document.getElementById('word-cloud-html');
+    const wordCloudCanvasHoverBox = document.getElementById('word-cloud-canvas-hover-box');
+
+    
+    //const elements = [wordCloudCanvas, wordCloudHtml];
+    const elements = wordCloudCanvas;
+    const originalWords = words.map(x => ({ word: x[0], count: x[1] }));
+    const options = {
+      list: words,
+      gridSize: 10,
+      weightFactor: 8,
+      fontFamily: "sans-serif",
+      color: 'random-dark',
+      rotateRatio: 0,
+      rotationSteps: 2,
+      shape: "circle",
+      ellipticity: 0.6,
+      shrinkToFit: true,
+      minSize: 6,
+      classes: 'word-cloud-item',
+      click: (item, dimension, event) => {
+        // We lookup the original item to get the accurate count
+        // because the 'shrinkToFit' option changes the count to fit the word
+        const originalItem = originalWords.find(x => x.word === item[0]);
+        alert(`${originalItem.word}: ${originalItem.count}`);
+      }, 
+      // This is not working correctly
+      /*
+      hover: (item, dimension, event) => {
+        if (!dimension) {
+          wordCloudCanvasHoverBox.hidden = true;
+          return;
+        }
+        
+        wordCloudCanvasHoverBox.hidden = false;
+        wordCloudCanvasHoverBox.style.left = dimension.x + 'px';
+        wordCloudCanvasHoverBox.style.top = dimension.y + 'px';
+        wordCloudCanvasHoverBox.style.width = dimension.w + 'px';
+        wordCloudCanvasHoverBox.style.height = dimension.h + 'px';
+      }
+      */
+    };
+    WordCloud(elements, options);
+    
+    // We have to add our own click handler to the HTML-based version
+    // because the library only handles clicks on the canvas-based version
+    wordCloudCanvas.addEventListener('wordcloudstop', function (e) {
+      document.querySelectorAll('.word-cloud-item').forEach(function (element) {
+          element.addEventListener('click', event => {
+            const originalItem = originalWords.find(x => x.word === element.textContent);
+            alert(`${originalItem.word}: ${originalItem.count}`);
+          });
+      });
+});
+  } else {
+    console.log('WordCloud not supported');
+  }
+};
+
+const redrawButton = document.getElementById('redrawButton');
+redrawButton.addEventListener('click', drawWordCloud);
+
+drawWordCloud();
+  </script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+
+<script>
+
+    let list = [['things',9], ['that',8], ['are',11], ['thingsan',7], ['actress',1], ['actressasdf',1], ['actressasdfasdf',1], ['actressasdfasdfI',4], ['hope',4], ['thats',4], ['not',4], ['a',22], ['curse',1], ['cursehere',3], ['my',3], ['details',1], ['detailsLorem',2], ['ipsum',12], ['dolor',3], ['sit',6], ['amet',6], ['consectetur',3], ['adipiscing',3], ['elit',12], ['Suspendisse',12], ['augue',15], ['laoreet',12], ['sed',12], ['sollicitudin',9], ['auctor',9], ['ultrices',9], ['id',15], ['lacus',9], ['Duis',6], ['eros',15], ['nisl',11], ['eleifend',3], ['ac',15], ['mattis',3], ['sodales',6], ['Aliquam',3], ['erat',9], ['volutpat',6], ['Curabitur',9], ['ligula',6], ['vel',12], ['fringilla',12], ['at',3], ['nibh',6], ['commodo',3], ['lectus',6], ['Cras',9], ['ante',15], ['non',9], ['justo',6], ['efficitur',3], ['nec',15], ['tincidunt',9], ['turpis',6], ['finibus',9], ['Phasellus',9], ['purus',6], ['tristique',9], ['quis',12], ['diam',9], ['imperdiet',3], ['blandit',12], ['metus',6], ['Maecenas',3], ['mi',3], ['nulla',9], ['varius',3], ['vehicula',3], ['et',12], ['venenatis',6], ['eget',9], ['Nunc',9], ['mauris',6], ['dignissim',6], ['nunc',3], ['eu',3], ['feugiat',6], ['Integer',3], ['viverra',6], ['velit',9], ['convallis',9], ['posuere',12], ['sagittis',3], ['sapien',9], ['lacinia',12], ['vulputate',12], ['faucibus',3], ['felis',6], ['hendrerit',6], ['risus',9], ['rhoncus',3], ['ut',15], ['Praesent',3], ['suscipit',9], ['magna',6], ['molestie',3], ['in',6], ['est',3], ['Nullam',12], ['elementum',3], ['rutrum',3], ['dapibus',6], ['Nam',3], ['pellentesque',15], ['tempor',3], ['vitae',6], ['Donec',6], ['egestas',3], ['lorem',9], ['libero',6], ['Fusce',3], ['enim',3], ['In',3], ['pretium',6], ['pulvinar',9], ['quam',6], ['vestibulum',3], ['tempus',6], ['ornare',9], ['dui',6], ['Nulla',3], ['tellus',6], ['bibendum',6], ['facilisis',6], ['consequat',3], ['Proin',3], ['porttitor',3], ['congue',3], ['cursus',3], ['semper',9], ['accumsan',3], ['tortor',6], ['sem',6], ['nisi',9], ['gravida',3], ['Etiam',3], ['orci',3], ['ex',6], ['nislLorem',1] ];
+
+//let list = [['bar', 16], ['buzz', 32], ['spanish', 21], ['green', 11], ['eagle', 33]];//what
+var attempt = WordCloud(document.getElementById('demo'), { 
+
+      rotateRatio: 0,
+      rotationSteps: 2,
+      shape: "circle",
+      ellipticity: 0.6,
+      shrinkToFit: true,
+      minSize: 6,
+
+  list: list,  
+  minFontSize: 200,
+  fontFamily: 'Times, serif', 
+  //rotateRatio: 0.5,
+  //rotationSteps: 2,
+  backgroundColor: '#fff',  
+  drawOutOfBound: true,
+  gridSize: Math.round(16 * jQuery('#demo').width() / 1024),
+  weightFactor: function (size) {
+    return Math.pow(size, 1.6) * jQuery('#demo').width() / 1024;
+  },
+} );
+
+
+ // gridSize: Math.round(16 * $('#canvas').width() / 1024),
+ //  weightFactor: function (size) {
+ //    return Math.pow(size, 2.3) * $('#canvas').width() / 1024;
+ //  },
+ //  fontFamily: 'Times, serif',
+ //  color: function (word, weight) {
+ //    return (weight === 12) ? '#f02222' : '#c09292';
+ //  },
+ //  rotateRatio: 0.5,
+ //  rotationSteps: 2,
+ //  backgroundColor: '#ffe0e0'
+</script>
+
+
+
+  </body>
+  </html>
+
