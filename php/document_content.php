@@ -88,17 +88,13 @@
                 echo nl2br($contenu); 
                 break;          
               case ($format === 'html' || $format === 'htm'):
-                  // TODO
-
                   //var_dump($absolute_path);
                   // bouton pour avoir une redirection page html             
                   echo '<a href="' . $absolute_path . '" target="_blank">Ouvrir le fichier</a>';
-
-                  //  
-
-
                   break;
-          
+              case 'pdf' :
+                echo '<a href="' . $absolute_path . '" target="_blank">Ouvrir le fichier</a>';
+                  break;
               default:
                   echo "ERREUR : fichier non valide.";
           }                        

@@ -4,6 +4,7 @@
 
 //header('Content-Type: text/html; charset=utf-8');
 //mb_internal_encoding('UTF-8');
+require_once 'utils.php';
 
 
 /**
@@ -17,14 +18,36 @@ function console_log($msg, $content='') {
 
 
 /**
- * Lecture de fichier & convertir sous la forme d'iun tableau
+ * Lecture de fichier & convertir sous la forme d'un tableau
  * @param string $path : chemin vers le fichier
  * @param string $separator : le séparateur pour parser les mots
  * @return array : contenu du fichier sous forme d'un tableau
  */
 function read_file($path, $separator=" ") {
-    console_log("Lecture du fichier",$path);
-    $contenuFichier = file_get_contents($path);
+
+
+    // TODO : condition 
+    //
+    $info_fichier = pathinfo($path);
+
+    //
+    $format = $info_fichier['extension'];
+
+    switch ($format) {
+        case 'txt':
+        case 'html':
+        case 'htm':
+            console_log("Lecture du fichier",$path);
+            $contenuFichier = file_get_contents($path);               
+            break;
+        case 'pdf':  
+            console_log("Lecture du fichier",$path);
+            $contenuFichier = get_pdf_text($path);
+
+            break;    
+    }    
+
+
 
     console_log("Longueur du fichier",strlen($contenuFichier));
     //echo strlen($contenuFichier);

@@ -53,6 +53,7 @@ function explorerDir($path)
 					indexation($path_source);
 					echo $path_source." ✓<br>";
 				} elseif ($extension === 'pdf') {
+					indexation($path_source);
 					echo $path_source." ✓<br>";
 
 				}

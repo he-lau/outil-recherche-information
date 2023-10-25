@@ -1,6 +1,8 @@
 <?php
 require_once "functions_db.php";
 
+require_once 'utils.php';
+
 connect_db();
 
 ?>
@@ -168,18 +170,20 @@ foreach ($res as $doc => $freq_total) {
 
   var_dump($info_fichier);
 
+  $doc_absolute_path = dirname(__FILE__, 2)."/".$doc;
+
 
   switch ($format) {
     // .txt
     case 'txt':
       //recuperer une description du doc
-      $description = substr(file_get_contents(dirname(__FILE__, 2)."/".$doc),0,200);
+      $description = substr(file_get_contents($doc_absolute_path),0,200);
       break;      
       
       
     case 'html':
     case 'htm':
-      $htmlContent = file_get_contents(dirname(__FILE__, 2) . "/" . $doc);
+      $htmlContent = file_get_contents($doc_absolute_path);
     
       // Utilisez strip_tags pour supprimer toutes les balises HTML du contenu
       $plainText = strip_tags($htmlContent);
@@ -189,7 +193,13 @@ foreach ($res as $doc => $freq_total) {
     
       // Tronquez le texte à 200 caractères
       $description = substr(htmlspecialchars($plainText), 0, 200);
-      break;    
+      break;  
+      
+   case 'pdf' :
+    $description = substr(get_pdf_text(dirname(__FILE__, 2) . "/" . $doc),0,200);
+
+    break;  
+  
   } 
 
   // concatenation du resultat courant  
