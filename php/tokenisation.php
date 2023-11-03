@@ -107,7 +107,9 @@ function clean_array($array) {
         $word = str_replace('’', "'", $word);
 
         // Garder que les mots avec minimum 3 caractères
-        if (preg_match('/^[a-zA-Z]{3,}$/', $word)) {
+        //if (preg_match('/^[a-zA-Z]{3,}$/', $word)) {
+        if (preg_match('/^[\p{L}]{3,}$/u', $word)) {
+
             // Supprimer les caractères avant une apostrophe (',’) exemple : "l'éléphant" --> "éléphant"
             $word = preg_replace('/[a-zA-Z]*\'([a-zA-Z]+)/', '$1', $word);
 

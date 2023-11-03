@@ -47,13 +47,13 @@ function explorerDir($path)
 
 				$extension = pathinfo($path_source, PATHINFO_EXTENSION);
 				if ($extension == "txt") {								
-					indexation($path_source);
+					indexation($path_source,'./stopwords-fr.txt','./lexique-lemma.csv');
 					echo $path_source." ✓<br>";
 				} elseif ($extension === "html" || $extension === "htm") {
-					indexation($path_source);
+					indexation($path_source,'./stopwords-fr.txt','./lexique-lemma.csv');
 					echo $path_source." ✓<br>";
 				} elseif ($extension === 'pdf') {
-					indexation($path_source);
+					indexation($path_source,'./stopwords-fr.txt','./lexique-lemma.csv');
 					echo $path_source." ✓<br>";
 
 				}

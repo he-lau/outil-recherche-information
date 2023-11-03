@@ -7,6 +7,9 @@
     require_once "php/functions_db.php";
 
     connect_db();
+
+    require_once "php/utils.php";
+
 ?>
 
 
@@ -22,7 +25,7 @@
      */
 
     // lecture des fichiers
-    function indexation($cheminFichier,$stop_path='./stopwords-fr.txt') {
+    function indexation($cheminFichier,$stop_path,$lemma_path) {
         
         $contenuFichier = read_file($cheminFichier);
     
@@ -38,6 +41,18 @@
         console_log("Suppression des stopwords",$cheminFichier);
         $contenuFichier = remove_stopwords($contenuFichier,$stop_content);
         console_log("[FIN] Suppression des stopwords",$cheminFichier);
+        
+        // IMPORTANT :  TODO : lemmatisation 
+
+        $lemma_content = get_lemmatization_dict($lemma_path);
+
+        console_log("Lemmatisation...",$cheminFichier);
+        $contenuFichier = lemmatization($contenuFichier,$lemma_content);
+        console_log("[FIN] Lemmatisation...",$cheminFichier);
+
+        var_dump($contenuFichier);
+
+
     
         //var_dump(implode("<br>", $contenuFichier));
         console_log("tokenisation des mots",$cheminFichier);
