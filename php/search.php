@@ -18,6 +18,12 @@ connect_db();
 // 4 - tableau 2D retourné par la bdd
 // 5 - retourner une liste des docs dans l'ordre decroissant (frequence_mot) de l'ENSEMBLE des mots
 
+
+
+/**
+ * 
+ * TODO : suggestion correction orthographique
+ */
 ?>
 
 <?php
@@ -61,6 +67,9 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
   
   $words =  explode(' ',$query);
 
+  // lemmatisation
+  $words = lemmatization($words,get_lemmatization_dict('../lexique-lemma.csv'));
+
   //var_dump($words);
 
   //echo "<br>";
@@ -71,7 +80,7 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
   $words_id = array_map("get_id_mot",$words);
 
   foreach ($words as $word) {
-    array_push($words_id,get_id_mot($word));
+    array_push($words_id,get_id_like_mot($word));
   }
   
   //var_dump($words_id);
@@ -168,7 +177,7 @@ foreach ($res as $doc => $freq_total) {
   //
   $format = $info_fichier['extension'];
 
-  var_dump($info_fichier);
+  //var_dump($info_fichier);
 
   $doc_absolute_path = dirname(__FILE__, 2)."/".$doc;
 
@@ -208,12 +217,18 @@ foreach ($res as $doc => $freq_total) {
 
 }
 
+
+
+
+/*
 echo "<pre>";
 
 var_dump($infos_word);
 var_dump($words_id);
 
 echo "</pre>";
+
+*/
 
 // informe l'utilisateur de la requete + nombre de resultat
 echo "<h2 class='search-result-count'>Nombre de réponse(s) pour \"$query\" : $num_results</h2>";

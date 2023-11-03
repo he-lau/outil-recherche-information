@@ -9,7 +9,13 @@ function get_pdf_text($path) {
     $parser = new \Smalot\PdfParser\Parser();
     $pdf = $parser->parseFile($path);
 
-    return $pdf->getText();
+    $pdf_text = $pdf->getText();
+
+    $chaine_sans_espaces_en_trop = preg_replace('/\s+/', ' ', $pdf_text);
+
+
+    return $chaine_sans_espaces_en_trop;
+
 }
 
 function get_lemmatization_dict($path) {

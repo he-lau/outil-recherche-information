@@ -50,7 +50,7 @@
         $contenuFichier = lemmatization($contenuFichier,$lemma_content);
         console_log("[FIN] Lemmatisation...",$cheminFichier);
 
-        var_dump($contenuFichier);
+        //var_dump($contenuFichier);
 
 
     

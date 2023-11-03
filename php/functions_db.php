@@ -135,8 +135,29 @@ function get_id_mot($contenu) {
   global $db;
   
   // Recherche le mot dans la table MOT
+  //$stmt = $db->prepare("SELECT id FROM MOT WHERE contenu LIKE :contenu");
+  $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu = :contenu");
+  //$stmt->execute(array("contenu" => "%".$contenu."%"));
+  $stmt->execute(array("contenu" => $contenu));
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if ($row) {
+    // Mot trouvé, renvoie son ID
+    return $row['id'];
+  } else {
+    // Mot non trouvé
+    return null;
+  }
+}
+
+function get_id_like_mot($contenu) {
+  global $db;
+  
+  // Recherche le mot dans la table MOT
   $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu LIKE :contenu");
+  //$stmt = $db->prepare("SELECT id FROM MOT WHERE contenu = :contenu");
   $stmt->execute(array("contenu" => "%".$contenu."%"));
+  //$stmt->execute(array("contenu" => $contenu));
   $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if ($row) {
