@@ -43,10 +43,16 @@ function read_file($path, $separator=" ") {
         case 'pdf':  
             console_log("Lecture du fichier",$path);
             $contenuFichier = get_pdf_text($path);
+            /*
             echo '<pre>';
             var_dump(explode($separator,$contenuFichier));
             echo '</pre>';
-            break;    
+            */
+            break;
+        case 'docx':
+            console_log("Lecture du fichier",$path);
+            $contenuFichier = get_docx_text($path);
+            break;
     }    
 
 

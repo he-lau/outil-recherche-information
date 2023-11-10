@@ -1,4 +1,6 @@
-
+<?php 
+require_once 'utils.php';
+?>
 
 <!DOCTYPE html>
 <html>
@@ -53,6 +55,7 @@
 
           // TODO 
 
+          // 
           if(
             isset($_GET["chemin"])
             && !empty($_GET["chemin"])  
@@ -94,6 +97,16 @@
                   break;
               case 'pdf' :
                 echo '<a href="' . $absolute_path . '" target="_blank">Ouvrir le fichier</a>';
+                echo '<br><br>';
+                echo '<h1>Contenu du fichier</h1>';
+                echo get_pdf_text($absolute_path);
+                  break;
+
+              case 'docx' :
+                echo '<a href="' . $absolute_path . '" target="_blank">Ouvrir le fichier</a>';
+                echo '<br><br>';
+                echo '<h1>Contenu du fichier</h1>';
+                echo get_docx_text($absolute_path);
                   break;
               default:
                   echo "ERREUR : fichier non valide.";

@@ -55,7 +55,9 @@ function explorerDir($path)
 				} elseif ($extension === 'pdf') {
 					indexation($path_source,'./stopwords-fr.txt','./lexique-lemma.csv');
 					echo $path_source." ✓<br>";
-
+				} elseif ($extension === 'docx') {
+					indexation($path_source,'./stopwords-fr.txt','./lexique-lemma.csv');
+					echo $path_source." ✓<br>";
 				}
 
 

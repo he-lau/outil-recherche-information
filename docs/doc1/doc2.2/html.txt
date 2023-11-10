@@ -1,0 +1,41 @@
+HTML, ou HyperText Markup Language, est le langage de balisage standard utilisé pour créer et concevoir des pages web. Il sert à structurer le contenu d'une page en utilisant des balises qui définissent différents éléments et leur attribuent des rôles spécifiques. Voici une explication simplifiée de quelques concepts clés d'HTML :
+
+Balises et Éléments : Les balises HTML sont utilisées pour définir des éléments sur une page. Par exemple, la balise <p> est utilisée pour définir un paragraphe, et le texte entre <p> et </p> est l'élément de paragraphe lui-même.
+
+Structure de Base : Une page HTML de base commence généralement par les balises <html> qui définissent le début et la fin du document. À l'intérieur, on trouve les balises <head> qui contiennent des informations sur la page (comme le titre), et les balises <body> qui contiennent le contenu principal.
+
+html
+Copy code
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ma Première Page</title>
+  </head>
+  <body>
+    <p>Ceci est un paragraphe sur ma page.</p>
+  </body>
+</html>
+Attributs : Les balises peuvent avoir des attributs qui fournissent des informations supplémentaires sur les éléments. Par exemple, la balise <img> utilise l'attribut src pour spécifier l'emplacement de l'image.
+
+html
+Copy code
+<img src="image.jpg" alt="Une image">
+Liens : Les liens sont créés avec la balise <a>. L'attribut href spécifie l'URL vers laquelle le lien pointe.
+
+html
+Copy code
+<a href="https://www.example.com">Cliquez ici</a>
+Listes : Il existe deux types de listes en HTML. Les listes ordonnées (<ol>) utilisent des nombres ou des lettres, tandis que les listes non ordonnées (<ul>) utilisent des puces.
+
+html
+Copy code
+<ol>
+  <li>Élément 1</li>
+  <li>Élément 2</li>
+</ol>
+
+<ul>
+  <li>Puce 1</li>
+  <li>Puce 2</li>
+</ul>
+HTML est la fondation de toute page web, définissant sa structure et permettant l'intégration d'autres technologies telles que CSS (pour la mise en page) et JavaScript (pour l'interactivité).

@@ -204,10 +204,13 @@ foreach ($res as $doc => $freq_total) {
       $description = substr(htmlspecialchars($plainText), 0, 200);
       break;  
       
-   case 'pdf' :
-    $description = substr(get_pdf_text(dirname(__FILE__, 2) . "/" . $doc),0,200);
+    case 'pdf' :
+      $description = substr(get_pdf_text(dirname(__FILE__, 2) . "/" . $doc),0,200);
+      break;  
 
-    break;  
+    case 'docx' :
+      $description = substr(get_docx_text(dirname(__FILE__, 2) . "/" . $doc),0,200);
+      break;      
   
   } 
 

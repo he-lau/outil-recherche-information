@@ -1,0 +1,10 @@
+
+JavaScript est un langage de programmation polyvalent qui est principalement utilisé pour rendre les pages web interactives. Il permet aux développeurs d'ajouter des fonctionnalités dynamiques à leurs sites web, ce qui améliore l'expérience utilisateur. JavaScript est un langage interprété, ce qui signifie qu'il est exécuté directement dans le navigateur web de l'utilisateur, lui permettant d'interagir avec l'interface utilisateur et de manipuler le contenu de la page en temps réel.
+
+Une des principales utilisations de JavaScript est la manipulation du DOM (Document Object Model). Le DOM représente la structure hiérarchique d'une page web et JavaScript permet de le modifier dynamiquement. Cela signifie que les développeurs peuvent ajouter, supprimer ou modifier des éléments HTML et des attributs en réponse aux actions de l'utilisateur.
+
+JavaScript est également utilisé pour gérer les événements, tels que les clics de souris, les pressions de touche, et autres interactions de l'utilisateur. En réponse à ces événements, les développeurs peuvent définir des fonctions qui effectuent des actions spécifiques, ce qui contribue à rendre les applications web plus réactives.
+
+Outre son utilisation côté client, JavaScript peut également être utilisé côté serveur grâce à des environnements tels que Node.js. Cela permet aux développeurs de créer des applications web full-stack en utilisant le même langage des deux côtés, simplifiant ainsi le développement et la maintenance du code.
+
+En résumé, JavaScript est un langage essentiel pour le développement web moderne, offrant aux développeurs la possibilité de créer des applications interactives et dynamiques, tant du côté client que du côté serveur.

@@ -1,0 +1,70 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Page Web Améliorée</title>
+    <style>
+        /* ... (styles précédents) ... */
+
+        /* Style du carrousel */
+        .carousel-container {
+            overflow-x: hidden; /* Empêche le défilement horizontal */
+        }
+
+        .carousel {
+            display: flex;
+            width: 300%; /* Trois fois la largeur pour afficher chaque couleur */
+            transition: transform 1s ease-in-out;
+        }
+
+        .carousel div {
+            flex: 0 0 33.33%; /* La largeur de chaque élément du carrousel */
+            height: 200px; /* Hauteur arbitraire pour les divs du carrousel */
+        }
+
+        /* Couleurs des divs du carrousel */
+        .color1 { background-color: #3498db; }
+        .color2 { background-color: #2ecc71; }
+        .color3 { background-color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+    <!-- ... (code HTML précédent) ... -->
+
+    <section>
+        <h2>Carrousel de Couleurs</h2>
+        <div class="carousel-container">
+            <div class="carousel">
+                <div class="color1"></div>
+                <div class="color2"></div>
+                <div class="color3"></div>
+            </div>
+        </div>
+
+        <!-- ... (script jQuery pour rotation, si tu le souhaites) ... -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+            // Script pour le carrousel (peut être omis si tu ne veux pas de rotation avec JavaScript)
+            $(document).ready(function() {
+                setInterval(function() {
+                    $('.carousel').css('transform', 'translateX(-33.33%)');
+                    setTimeout(function() {
+                        $('.carousel').css('transform', 'translateX(-66.66%)');
+                        setTimeout(function() {
+                            $('.carousel').css('transform', 'translateX(0)');
+                        }, 1500);
+                    }, 1500);
+                }, 3000);
+            });
+        </script>
+    </section>
+
+    <!-- ... (code HTML suivant) ... -->
+
+</body>
+</html>
