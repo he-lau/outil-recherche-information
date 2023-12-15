@@ -12,9 +12,9 @@ connect_db();
 // 1 - recupere la chaine de caractere
 // 2 - transformer en liste de mots clé
 // 3 - questionner la bdd pour recuperer pour chaque mot la liste des documents
-  // 3.1 - recuperer l'id des mots SI EXISTANT
-  // 3.2 - recuperer l'id des document et la frequence des mots associés de la table INDEXATION
-  // 3.3 - recuperer les informations du document via son id de la table DOCUMENT
+// 3.1 - recuperer l'id des mots SI EXISTANT
+// 3.2 - recuperer l'id des document et la frequence des mots associés de la table INDEXATION
+// 3.3 - recuperer les informations du document via son id de la table DOCUMENT
 // 4 - tableau 2D retourné par la bdd
 // 5 - retourner une liste des docs dans l'ordre decroissant (frequence_mot) de l'ENSEMBLE des mots
 
@@ -30,29 +30,30 @@ connect_db();
 
 // fonction pour passer de l'étape 4- à l'étape 5-
 // OUTPUT : liste avec ("chemin"=>"frequence_mot")
-function sum_word_frequencies($infos_word) {
+function sum_word_frequencies($infos_word)
+{
   $result = array();
 
   // pour chaque association
   foreach ($infos_word as $word_array) {
     // pour chaque attribut ("contenu","chemin","frequence_mot")
-      foreach ($word_array as $info_array) {
+    foreach ($word_array as $info_array) {
 
-          $chemin = $info_array['chemin'];
-          $frequence = intval($info_array['frequence_mot']);
+      $chemin = $info_array['chemin'];
+      $frequence = intval($info_array['frequence_mot']);
 
-          // si le chemin du doc est déjà dans la liste
-          if (array_key_exists($chemin, $result)) {
-              // incremente la frequence
-              $result[$chemin] += $frequence;
-          } else {
-            // init la frequence
-              $result[$chemin] = $frequence;
-          }
-
-          //$result["documents_ids"][$info_array['id']] = ""; 
-
+      // si le chemin du doc est déjà dans la liste
+      if (array_key_exists($chemin, $result)) {
+        // incremente la frequence
+        $result[$chemin] += $frequence;
+      } else {
+        // init la frequence
+        $result[$chemin] = $frequence;
       }
+
+      //$result["documents_ids"][$info_array['id']] = ""; 
+
+    }
   }
   // tri ordre decroissant
   arsort($result);
@@ -63,12 +64,22 @@ function sum_word_frequencies($infos_word) {
 
 if (isset($_GET['query']) && !empty($_GET['query'])) {
   // XSS
-  $query = htmlspecialchars($_GET['query']);
-  
-  $words =  explode(' ',$query);
+  $query = trim(htmlspecialchars($_GET['query']));
+
+  $words =  explode(' ', $query);
+
+
+  // Vérifier si le query ne contient qu'un seul mot
+  if (count($words) === 1) {
+    // Suggestions
+
+    $suggestion_dict = get_suggestion_dict('../liste_francais.txt');
+    $suggestions = get_suggestions($suggestion_dict, $words[0], 2);
+    $suggestions = array_slice($suggestions, 0, 3);
+  }
 
   // lemmatisation
-  $words = lemmatization($words,get_lemmatization_dict('../lexique-lemma.csv'));
+  $words = lemmatization($words, get_lemmatization_dict('../lexique-lemma.csv'));
 
   //var_dump($words);
 
@@ -77,12 +88,12 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
   $words_id = array();
 
   // requête à la bdd pour avoir l'id des mots (NULL si pas dans la base)
-  $words_id = array_map("get_id_mot",$words);
+  $words_id = array_map("get_id_mot", $words);
 
   foreach ($words as $word) {
-    array_push($words_id,get_id_like_mot($word));
+    array_push($words_id, get_id_like_mot($word));
   }
-  
+
   //var_dump($words_id);
   //echo "<br>";  
 
@@ -93,13 +104,13 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
   foreach ($words_id as $id) {
     //echo "<br>";  
     // si le mot existe sur la bdd
-    if (!$id == null ) {
+    if (!$id == null) {
       //var_dump(get_mot_infos((int)$id))."<br>";
       //var_dump((int)$id);
       //echo "<br>";  
-      array_push($infos_word,get_mot_infos((int)$id));
+      array_push($infos_word, get_mot_infos((int)$id));
     }
-  }  
+  }
 
   //var_dump($infos_word);
 
@@ -107,8 +118,8 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
 
 
 
-// TEST
-/*
+  // TEST
+  /*
 $infos_word = array(
   array(
       array(
@@ -156,74 +167,71 @@ $infos_word = array(
 
 
 
-// on recupere la somme des frequences de tous les mots pour chaque doc
-$res = sum_word_frequencies($infos_word);
-// taille de la liste
-$num_results = count($res);
-// html
-$results_html = '';
+  // on recupere la somme des frequences de tous les mots pour chaque doc
+  $res = sum_word_frequencies($infos_word);
+  // taille de la liste
+  $num_results = count($res);
+  // html
+  $results_html = '';
 
-$_SESSION['res'] = $res;
-
-
-// pour chaque doc, on affiche son nom.extension à l'aide de basename() (somme_frequence)
-foreach ($res as $doc => $freq_total) {
-
-  /**TODO : switch... case pour l'extension du fichier */
-
-  //
-  $info_fichier = pathinfo($doc);
-
-  //
-  $format = $info_fichier['extension'];
-
-  //var_dump($info_fichier);
-
-  $doc_absolute_path = dirname(__FILE__, 2)."/".$doc;
+  $_SESSION['res'] = $res;
 
 
-  switch ($format) {
-    // .txt
-    case 'txt':
-      //recuperer une description du doc
-      $description = substr(file_get_contents($doc_absolute_path),0,200);
-      break;      
-      
-      
-    case 'html':
-    case 'htm':
-      $htmlContent = file_get_contents($doc_absolute_path);
-    
-      // Utilisez strip_tags pour supprimer toutes les balises HTML du contenu
-      $plainText = strip_tags($htmlContent);
-    
-      // Supprimez les espaces et les sauts de ligne inutiles
-      $plainText = preg_replace('/\s+/', ' ', $plainText);
-    
-      // Tronquez le texte à 200 caractères
-      $description = substr(htmlspecialchars($plainText), 0, 200);
-      break;  
-      
-    case 'pdf' :
-      $description = substr(get_pdf_text(dirname(__FILE__, 2) . "/" . $doc),0,200);
-      break;  
+  // pour chaque doc, on affiche son nom.extension à l'aide de basename() (somme_frequence)
+  foreach ($res as $doc => $freq_total) {
 
-    case 'docx' :
-      $description = substr(get_docx_text(dirname(__FILE__, 2) . "/" . $doc),0,200);
-      break;      
-  
-  } 
+    /**TODO : switch... case pour l'extension du fichier */
 
-  // concatenation du resultat courant  
-  $results_html .= "<li><a data-document-id='"."42"."' href='./php/document_content.php?chemin=$doc'><h3>".basename($doc)."($freq_total)</h3><p class='doc-description'>$description...</p></a></li>";
+    //
+    $info_fichier = pathinfo($doc);
+
+    //
+    $format = $info_fichier['extension'];
+
+    //var_dump($info_fichier);
+
+    $doc_absolute_path = dirname(__FILE__, 2) . "/" . $doc;
 
 
-}
+    switch ($format) {
+        // .txt
+      case 'txt':
+        //recuperer une description du doc
+        $description = substr(file_get_contents($doc_absolute_path), 0, 200);
+        break;
+
+
+      case 'html':
+      case 'htm':
+        $htmlContent = file_get_contents($doc_absolute_path);
+
+        // Utilisez strip_tags pour supprimer toutes les balises HTML du contenu
+        $plainText = strip_tags($htmlContent);
+
+        // Supprimez les espaces et les sauts de ligne inutiles
+        $plainText = preg_replace('/\s+/', ' ', $plainText);
+
+        // Tronquez le texte à 200 caractères
+        $description = substr(htmlspecialchars($plainText), 0, 200);
+        break;
+
+      case 'pdf':
+        $description = substr(get_pdf_text(dirname(__FILE__, 2) . "/" . $doc), 0, 200);
+        break;
+
+      case 'docx':
+        $description = substr(get_docx_text(dirname(__FILE__, 2) . "/" . $doc), 0, 200);
+        break;
+    }
+
+    // concatenation du resultat courant  
+    $results_html .= "<li><a data-document-id='" . "42" . "' href='./php/document_content.php?chemin=$doc'><h3>" . basename($doc) . "($freq_total)</h3><p class='doc-description'>$description...</p></a></li>";
+  }
 
 
 
 
-/*
+  /*
 echo "<pre>";
 
 var_dump($infos_word);
@@ -233,11 +241,36 @@ echo "</pre>";
 
 */
 
-// informe l'utilisateur de la requete + nombre de resultat
-echo "<h2 class='search-result-count'>Nombre de réponse(s) pour \"$query\" : $num_results</h2>";
-// affiche la liste
-echo "<ul class='search-result'>$results_html</ul>";
+  // var_dump($suggestions);
 
+  // informe l'utilisateur de la requete + nombre de resultat
+  echo "<h2 class='search-result-count'>Nombre de réponse(s) pour \"$query\" : $num_results</h2>";
+
+  // suggestions
+  if (isset($suggestions) && !empty($suggestions)) {
+    echo "<div class='search-result-suggestion'>Suggestions :";
+    echo "<style>.suggestion-link { margin-right: 10px; }</style>";
+
+
+    foreach ($suggestions as $suggestion) {
+
+
+      $word = $suggestion['word'];
+      // var_dump($word);
+      $distance = $suggestion['distance'];
+
+      // Créer un lien avec un identifiant unique pour chaque suggestion
+      $linkId = 'suggestion_' . mb_strtolower(str_replace(' ', '_', $word), 'UTF-8');
+
+      // Utilisez une balise <div> pour séparer les liens
+      echo "<a href='#' id='{$linkId}' class='suggestion-link'>$word ($distance)</a>";
+    }
+    echo "</div>";
+  }
+
+
+  // affiche la liste
+  echo "<ul class='search-result'>$results_html</ul>";
 } // isset
 
 

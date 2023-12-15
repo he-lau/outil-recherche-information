@@ -118,7 +118,11 @@ body {
     background-color: #D4F1F4;
   }
 
-
+  .search-result-suggestion {
+    margin: auto !important;
+    width: 600px;
+    font-weight: 600;
+  }
 
 
   /* Positionnement du menu */
