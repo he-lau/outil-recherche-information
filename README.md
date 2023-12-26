@@ -15,3 +15,6 @@ L’objectif est de créer un outil pour chercher des informations utilisant des
 - création des tables nécessaire dans `db/db.sql`
 - changer les paramétres de connexion à la base de donnée (SERVER,USERNAME,PASSWORD) dans `php/const.php`;
 - lancer l'indexation avec le script  `LireRecursDir.php`
+
+## Démonstration
+- https://www.youtube.com/watch?v=1EmsQJNWaBo
