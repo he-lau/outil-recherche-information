@@ -3,33 +3,37 @@
 <?php
 
 require_once("debug_console.php");
+require_once("const.php");
 
 /*
-  Connection à la bd
+  Connexion à la bd
 */
-function connect_db() {
+function connect_db()
+{
   global $db;
 
-$server = "localhost;port=3306;dbname=m1_outil_recherche";
-$username = "root";
-$password = "";
+  //$server = "localhost;port=3306;dbname=m1_outil_recherche";
+  $server = SERVER;
+  $username = USERNAME;
+  $password = PASSWORD;
 
-try {
-  $db = new PDO("mysql:host=$server", $username, $password);
-  // set the PDO error mode to exception
-  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  //debug_to_console("Connection a la db réussi.");
+  try {
+    $db = new PDO("mysql:host=$server", $username, $password);
+    // set the PDO error mode to exception
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    //debug_to_console("Connection a la db réussi.");
 
-} catch(PDOException $e) {
-  debug_to_console("Connection failed:"  . $e->getMessage());
-}
+  } catch (PDOException $e) {
+    debug_to_console("Connection failed:"  . $e->getMessage());
+  }
 }
 
 
 /*
   Ajout d'un document à la base
 */
-function insert_document($nom, $chemin, $extension, $taille) {
+function insert_document($nom, $chemin, $extension, $taille)
+{
   global $db;
 
   // Check if document already exists based on chemin
@@ -58,7 +62,8 @@ function insert_document($nom, $chemin, $extension, $taille) {
 
 
 // Ajout d'un mot à la db
-function insert_mot($contenu) {
+function insert_mot($contenu)
+{
   global $db;
 
   // Check if mot already exists based on contenu
@@ -84,7 +89,8 @@ function insert_mot($contenu) {
 
 
 
-function insert_indexation($document_id, $mot_id, $frequence_mot) {
+function insert_indexation($document_id, $mot_id, $frequence_mot)
+{
   global $db;
 
   // Check if the indexation already exists for the given document and word
@@ -110,7 +116,8 @@ function insert_indexation($document_id, $mot_id, $frequence_mot) {
   }
 }
 
-function get_document_id($chemin) {
+function get_document_id($chemin)
+{
   global $db;
 
   // préparer la requête de recherche
@@ -131,9 +138,10 @@ function get_document_id($chemin) {
   return null;
 }
 
-function get_id_mot($contenu) {
+function get_id_mot($contenu)
+{
   global $db;
-  
+
   // Recherche le mot dans la table MOT
   //$stmt = $db->prepare("SELECT id FROM MOT WHERE contenu LIKE :contenu");
   $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu = :contenu");
@@ -150,13 +158,14 @@ function get_id_mot($contenu) {
   }
 }
 
-function get_id_like_mot($contenu) {
+function get_id_like_mot($contenu)
+{
   global $db;
-  
+
   // Recherche le mot dans la table MOT
   $stmt = $db->prepare("SELECT id FROM MOT WHERE contenu LIKE :contenu");
   //$stmt = $db->prepare("SELECT id FROM MOT WHERE contenu = :contenu");
-  $stmt->execute(array("contenu" => "%".$contenu."%"));
+  $stmt->execute(array("contenu" => "%" . $contenu . "%"));
   //$stmt->execute(array("contenu" => $contenu));
   $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -189,7 +198,8 @@ function get_mot_infos($mot_id) {
 
 
 // retourne les infos pour un mot
-function get_mot_infos($mot_id) {
+function get_mot_infos($mot_id)
+{
   global $db;
 
   // on recupere le chemin du document , le contenu du mot et la frequence ($mot_id)

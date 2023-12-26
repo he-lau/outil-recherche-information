@@ -42,8 +42,25 @@ require_once 'utils.php';
         <li><a href="../index.php">Acceuil</a></li>
 
         <!-- TODO : Télèchargement du fichier -->
-        <!-- <li><a id="download-btn" href="../docs/reforme-retraite.txt" download>Télécharger</a></li> -->
+        <?php
+        // Check if the 'chemmin' parameter is set in the query string
+        if (isset($_GET['chemin'])) {
+          // Get the value of the 'chemmin' parameter
+          $chemin = "../" . $_GET['chemin'];
 
+          // Validate or sanitize the path if needed (to prevent security issues)
+          // For simplicity, let's assume the value is safe for demonstration purposes
+
+          // Construct the download link with the provided path
+          $downloadLink = '<li><a id="download-btn" href="' . $chemin . '" download>Télécharger</a></li>';
+
+          echo $downloadLink;
+        } else {
+          // Default download link if 'chemmin' is not set
+          $downloadLink = '<li><a id="download-btn" href="" download>Télécharger</a></li>';
+          echo $downloadLink;
+        }
+        ?>
         <li><a href="#" onclick="window.print(); return false;">Imprimer</a></li>
         <li><a href="#">+ aA</a></li>
         <li><a href="#">- aA</a></li>
@@ -58,8 +75,6 @@ require_once 'utils.php';
 
 
 
-
-      // TODO 
 
       // 
       if (

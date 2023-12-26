@@ -263,7 +263,8 @@ echo "</pre>";
       $linkId = 'suggestion_' . mb_strtolower(str_replace(' ', '_', $word), 'UTF-8');
 
       // Utilisez une balise <div> pour séparer les liens
-      echo "<a href='#' id='{$linkId}' class='suggestion-link'>$word ($distance)</a>";
+      //echo "<a href='#' id='{$linkId}' class='suggestion-link'>$word ($distance)</a>";
+      echo "<a href='#' id='{$linkId}' class='suggestion-link'>$word </a>";
     }
     echo "</div>";
   }
