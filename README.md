@@ -1,5 +1,10 @@
 # outil-recherche-information
 
+## Contexte
+
+- M2 Informatique THYP 
+- Laurent HE
+
 ## Présentation
 
 L’objectif est de créer un outil pour chercher des informations utilisant des mots-clés dans un ensemble de documents. L’application devra fournir une interface de recherche à l’utilisateur et permettre la visualisation des documents.
